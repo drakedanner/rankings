@@ -2,7 +2,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+**First-time setup:** Copy `.env.example` to `.env`, set a strong `POSTGRES_PASSWORD`, then see [SETUP.md](SETUP.md) for Docker and DB steps. Do not commit `.env`.
+
+Then run the development server:
 
 ```bash
 npm run dev
