@@ -21,6 +21,7 @@ model Show {
   tags        String[]
   score       Decimal   @db.Decimal(3, 1)
   tier        String
+  absolute_rank Int?
   description String?
   cover_url     String?
   tvmaze_id     Int?

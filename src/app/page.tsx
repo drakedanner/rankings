@@ -16,8 +16,8 @@ function buildQuery(filters: {
   if (filters.tiers.length) params.set("tier", filters.tiers.join(","));
   if (filters.networks.length) params.set("network", filters.networks.join(","));
   if (filters.tags.length) params.set("tag", filters.tags.join(","));
-  params.set("sort", "tier,score");
-  params.set("order", "desc");
+  params.set("sort", "absolute_rank");
+  params.set("order", "asc");
   return params.toString();
 }
 
@@ -119,7 +119,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 gap-2 lg:grid-cols-3 2xl:grid-cols-6">
               {shows.map((show, index) => (
-                <ShowCard key={show.id} show={show} rank={index + 1} depth={depth} />
+                <ShowCard key={show.id} show={show} rank={show.absolute_rank ?? index + 1} depth={depth} />
               ))}
             </div>
           )}

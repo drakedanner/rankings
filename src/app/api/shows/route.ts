@@ -7,8 +7,8 @@ export async function GET(request: NextRequest) {
   const tierParam = searchParams.get("tier");
   const networkParam = searchParams.get("network");
   const tagParam = searchParams.get("tag");
-  const sort = searchParams.get("sort") ?? "tier,score";
-  const order = searchParams.get("order") ?? "desc";
+  const sort = searchParams.get("sort") ?? "absolute_rank";
+  const order = searchParams.get("order") ?? "asc";
 
   const tiers = tierParam ? tierParam.split(",").map((t) => t.trim()).filter(Boolean) : [];
   const networks = networkParam ? networkParam.split(",").map((n) => n.trim()).filter(Boolean) : [];
@@ -29,17 +29,22 @@ export async function GET(request: NextRequest) {
     orderBy: { score: order === "asc" ? "asc" : "desc" },
   });
 
-  // Sort by tier order then score (Prisma can't do custom tier order)
   const tierRank = (t: string) => TIER_ORDER.indexOf(t as (typeof TIER_ORDER)[number]);
-  const sorted =
-    sort === "tier,score" || !sort
-      ? [...shows].sort((a, b) => {
-          const ta = tierRank(a.tier);
-          const tb = tierRank(b.tier);
-          if (ta !== tb) return ta - tb;
-          return order === "asc" ? Number(a.score) - Number(b.score) : Number(b.score) - Number(a.score);
-        })
-      : shows;
+  let sorted = shows;
+  if (sort === "absolute_rank") {
+    sorted = [...shows].sort((a, b) => {
+      const ra = a.absolute_rank ?? 1e9;
+      const rb = b.absolute_rank ?? 1e9;
+      return order === "asc" ? ra - rb : rb - ra;
+    });
+  } else if (sort === "tier,score" || !sort) {
+    sorted = [...shows].sort((a, b) => {
+      const ta = tierRank(a.tier);
+      const tb = tierRank(b.tier);
+      if (ta !== tb) return ta - tb;
+      return order === "asc" ? Number(a.score) - Number(b.score) : Number(b.score) - Number(a.score);
+    });
+  }
 
   const payload = sorted.map((s) => ({
     id: s.id,
@@ -49,6 +54,7 @@ export async function GET(request: NextRequest) {
     tags: s.tags,
     score: Number(s.score),
     tier: s.tier,
+    absolute_rank: s.absolute_rank,
     description: s.description,
     cover_url: s.cover_url,
     tvmaze_rating: s.tvmaze_rating != null ? Number(s.tvmaze_rating) : null,

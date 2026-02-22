@@ -14,6 +14,7 @@ export type Show = {
   tags: string[];
   score: number;
   tier: string;
+  absolute_rank?: number | null;
   description: string | null;
   cover_url: string | null;
   tvmaze_rating?: number | null;

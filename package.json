@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:full": "npm run covers:fetch && npm run episodes:fetch && next dev",
+    "dev": "pnpm run covers:fetch && pnpm run episodes:fetch && next dev",
+    "dev:next": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -14,7 +14,8 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "covers:fetch": "tsx scripts/fetch-show-covers.ts",
-    "episodes:fetch": "tsx scripts/fetch-episodes.ts"
+    "episodes:fetch": "tsx scripts/fetch-episodes.ts",
+    "ranks:backfill": "tsx scripts/backfill-absolute-ranks.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
