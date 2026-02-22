@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { TagPill } from "./tag-pill";
 import { PlaceholderCover } from "./placeholder-cover";
 import type { Show } from "./show-row";
@@ -35,7 +36,12 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
     "(max-width: 1023px) 80px, (min-width: 1536px) 16.67vw, (min-width: 1024px) 33.33vw, 100vw";
 
   return (
-    <article className="flex overflow-hidden rounded-sm bg-background lg:flex-col">
+    <Link
+      href={`/shows/${show.id}`}
+      className="block"
+      aria-label={`${show.name}, link to show page`}
+    >
+      <article className="flex overflow-hidden rounded-sm bg-background lg:flex-col">
       {/* Image: horizontal strip on mobile, cropped top block on desktop */}
       <div className="group relative w-20 shrink-0 aspect-[3/4] bg-card lg:w-full lg:aspect-[3/4] lg:min-h-0">
         {show.cover_url ? (
@@ -130,7 +136,11 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
           <div className="pt-1 lg:pt-2">
             <button
               type="button"
-              onClick={() => setReportExpanded((e) => !e)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setReportExpanded((prev) => !prev);
+              }}
               className="flex w-full items-center justify-between gap-2 text-left text-[10px] font-medium uppercase tracking-wider text-stat-label hover:text-foreground lg:text-xs"
             >
               <span>Scouting Report</span>
@@ -153,5 +163,6 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
         )}
       </div>
     </article>
+    </Link>
   );
 }
