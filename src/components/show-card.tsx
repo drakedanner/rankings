@@ -123,6 +123,16 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
                 Tier
               </div>
             </div>
+            {show.tvmaze_rating != null && (
+              <div>
+                <div className="font-mono text-lg font-bold tabular-nums text-foreground lg:text-xl">
+                  {show.tvmaze_rating.toFixed(1)}
+                </div>
+                <div className="text-[10px] uppercase tracking-wider text-stat-label lg:text-xs">
+                  TVMaze
+                </div>
+              </div>
+            )}
           </div>
         )}
 

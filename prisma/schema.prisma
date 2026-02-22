@@ -22,7 +22,29 @@ model Show {
   score       Decimal   @db.Decimal(3, 1)
   tier        String
   description String?
-  cover_url   String?
-  created_at  DateTime  @default(now())
+  cover_url     String?
+  tvmaze_id     Int?
+  tvmaze_rating Decimal? @db.Decimal(3, 1)
+  created_at    DateTime  @default(now())
   updated_at  DateTime  @updatedAt
+  episodes    Episode[]
+}
+
+model Episode {
+  id               String   @id @default(uuid())
+  showId           String
+  show             Show     @relation(fields: [showId], references: [id], onDelete: Cascade)
+  tvmaze_episode_id Int     @unique
+  name             String
+  season           Int
+  number           Int
+  airdate          DateTime?
+  summary          String?
+  runtime          Int?
+  image_url        String?
+  rating           Decimal? @db.Decimal(3, 1)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([showId])
 }

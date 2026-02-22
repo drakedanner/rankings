@@ -22,6 +22,7 @@ export async function GET(
     tier: show.tier,
     description: show.description,
     cover_url: show.cover_url,
+    tvmaze_rating: show.tvmaze_rating != null ? Number(show.tvmaze_rating) : null,
     created_at: show.created_at,
     updated_at: show.updated_at,
   });

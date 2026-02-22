@@ -9,13 +9,24 @@ const prisma = new PrismaClient();
 
 const TVMAZE_SEARCH = "https://api.tvmaze.com/search/shows";
 const DELAY_MS = 300;
+const CONCURRENCY = 4;
 const FORCE = process.argv.includes("--force");
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function searchTvmazeShow(name: string): Promise<{ imageUrl: string | null } | null> {
+type TvmazeSearchHit = {
+  show?: {
+    id?: number;
+    image?: { medium?: string; original?: string };
+    rating?: { average?: number | null } | null;
+  };
+};
+
+async function searchTvmazeShow(
+  name: string
+): Promise<{ imageUrl: string | null; tvmazeId: number; tvmazeRating: number | null } | null> {
   const url = new URL(TVMAZE_SEARCH);
   url.searchParams.set("q", name);
 
@@ -27,16 +38,24 @@ async function searchTvmazeShow(name: string): Promise<{ imageUrl: string | null
     return null;
   }
 
-  const data = (await res.json()) as Array<{ show?: { image?: { medium?: string; original?: string } } }>;
+  const data = (await res.json()) as TvmazeSearchHit[];
   const first = data[0]?.show;
   if (!first?.image) return null;
   const imageUrl = first.image.original ?? first.image.medium ?? null;
-  return imageUrl ? { imageUrl } : null;
+  const tvmazeId = first.id;
+  const tvmazeRating =
+    first.rating?.average != null && Number.isFinite(first.rating.average)
+      ? first.rating.average
+      : null;
+  if (imageUrl && tvmazeId != null) {
+    return { imageUrl, tvmazeId, tvmazeRating };
+  }
+  return null;
 }
 
 async function main() {
   const shows = await prisma.show.findMany({
-    where: FORCE ? undefined : { cover_url: null },
+    where: FORCE ? undefined : { OR: [{ cover_url: null }, { tvmaze_id: null }, { tvmaze_rating: null }] },
     orderBy: { name: "asc" },
   });
   if (shows.length === 0) {
@@ -48,21 +67,34 @@ async function main() {
   let updated = 0;
   let skipped = 0;
 
-  for (const show of shows) {
-    await sleep(DELAY_MS);
+  async function processShow(
+    show: (typeof shows)[0]
+  ): Promise<"updated" | "skipped"> {
     const result = await searchTvmazeShow(show.name);
     if (!result?.imageUrl) {
       console.log(`  Skip (no match): ${show.name}`);
-      skipped++;
-      continue;
+      return "skipped";
     }
-
     await prisma.show.update({
       where: { id: show.id },
-      data: { cover_url: result.imageUrl },
+      data: {
+        cover_url: result.imageUrl,
+        tvmaze_id: result.tvmazeId,
+        tvmaze_rating: result.tvmazeRating,
+      },
     });
     console.log(`  OK: ${show.name}`);
-    updated++;
+    return "updated";
+  }
+
+  for (let i = 0; i < shows.length; i += CONCURRENCY) {
+    const chunk = shows.slice(i, i + CONCURRENCY);
+    const results = await Promise.all(chunk.map(processShow));
+    updated += results.filter((r) => r === "updated").length;
+    skipped += results.filter((r) => r === "skipped").length;
+    if (i + CONCURRENCY < shows.length) {
+      await sleep(DELAY_MS);
+    }
   }
 
   console.log(`Done. Updated ${updated}, skipped ${skipped}.`);

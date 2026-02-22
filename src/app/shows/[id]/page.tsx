@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { EpisodeList } from "@/components/episode-list";
 import { Nav } from "@/components/nav";
 import { PlaceholderCover } from "@/components/placeholder-cover";
 import { TagPill } from "@/components/tag-pill";
@@ -18,6 +19,7 @@ export default async function ShowPage({ params }: Props) {
   }
 
   const score = Number(show.score);
+  const tvmazeRating = show.tvmaze_rating != null ? Number(show.tvmaze_rating) : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,6 +60,16 @@ export default async function ShowPage({ params }: Props) {
                 {score}
               </span>
               <span className="text-xs uppercase tracking-wider text-stat-label">Score</span>
+              {tvmazeRating != null && (
+                <>
+                  <span className="font-mono text-lg font-bold tabular-nums text-foreground">
+                    {tvmazeRating.toFixed(1)}
+                  </span>
+                  <span className="text-xs uppercase tracking-wider text-stat-label">
+                    TVMaze
+                  </span>
+                </>
+              )}
             </div>
             <div className="flex flex-wrap gap-1.5">
               {show.tags.map((tag) => (
@@ -75,14 +87,11 @@ export default async function ShowPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Episodes / Seasons placeholder */}
         <section className="mt-10 border-t border-[var(--secondary)]/20 pt-8">
           <h2 className="mb-4 font-serif text-lg font-bold text-foreground">
             Episodes
           </h2>
-          <p className="text-sm text-secondary">
-            Episode list coming soon.
-          </p>
+          <EpisodeList showId={id} />
         </section>
       </main>
     </div>

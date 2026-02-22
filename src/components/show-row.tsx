@@ -16,6 +16,7 @@ export type Show = {
   tier: string;
   description: string | null;
   cover_url: string | null;
+  tvmaze_rating?: number | null;
 };
 
 export function ShowRow({ show, rank }: { show: Show; rank: number }) {

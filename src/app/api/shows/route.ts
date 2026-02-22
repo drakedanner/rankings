@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
     tier: s.tier,
     description: s.description,
     cover_url: s.cover_url,
+    tvmaze_rating: s.tvmaze_rating != null ? Number(s.tvmaze_rating) : null,
     created_at: s.created_at,
     updated_at: s.updated_at,
   }));
