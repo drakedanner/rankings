@@ -42,7 +42,9 @@ export default function Home() {
       const res = await fetch(`/api/shows?${queryString}`);
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setShows(data);
+      const byAbsoluteRank = (a: Show, b: Show) =>
+        (a.absolute_rank ?? 1e9) - (b.absolute_rank ?? 1e9);
+      setShows((data as Show[]).slice().sort(byAbsoluteRank));
       if (!filtersApplied) {
         const networks = [...new Set((data as Show[]).map((s) => s.network).filter(Boolean))].sort();
         const tags = [...new Set((data as Show[]).flatMap((s) => s.tags))].sort();
