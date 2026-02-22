@@ -64,16 +64,16 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
           aria-hidden
         >
           <span className="font-mono text-5xl font-bold tabular-nums text-white lg:text-6xl">
-            {rank != null ? `#${rank}` : "—"}
+            {rank != null ? `${rank}` : "—"}
           </span>
         </div>
         <div className="absolute bottom-1 left-1 flex items-center gap-1 lg:bottom-1.5 lg:left-1.5 lg:gap-1.5">
           <span
             className="flex h-6 w-6 items-center justify-center rounded-full bg-header-bar font-mono text-[10px] font-bold tabular-nums text-white lg:h-7 lg:w-7 lg:text-xs"
-            aria-label={rank != null ? `Rank #${rank} in full list` : "Unranked"}
-            title={rank != null ? `Position #${rank} in full ranking` : undefined}
+            aria-label={rank != null ? `Rank ${rank} in full list` : "Unranked"}
+            title={rank != null ? `Position ${rank} in full ranking` : undefined}
           >
-            {rank != null ? `#${rank}` : "—"}
+            {rank != null ? `${rank}` : "—"}
           </span>
           <span className="rounded bg-header-bar/95 px-1 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white backdrop-blur-sm lg:px-1.5 lg:py-0.5 lg:text-xs">
             Tier {show.tier}
