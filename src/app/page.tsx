@@ -39,7 +39,7 @@ export default function Home() {
   const fetchShows = useCallback(async (queryString: string, filtersApplied: boolean) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/shows?${queryString}`);
+      const res = await fetch(`/api/shows?${queryString}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       const byAbsoluteRank = (a: Show, b: Show) =>
