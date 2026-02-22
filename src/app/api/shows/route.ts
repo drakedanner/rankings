@@ -8,7 +8,8 @@ export async function GET(request: NextRequest) {
   const networkParam = searchParams.get("network");
   const tagParam = searchParams.get("tag");
   const sort = searchParams.get("sort") ?? "absolute_rank";
-  const order = searchParams.get("order") ?? "asc";
+  const orderParam = searchParams.get("order") ?? "asc";
+  const order = sort === "absolute_rank" ? "asc" : orderParam;
 
   const tiers = tierParam ? tierParam.split(",").map((t) => t.trim()).filter(Boolean) : [];
   const networks = networkParam ? networkParam.split(",").map((n) => n.trim()).filter(Boolean) : [];
@@ -24,9 +25,14 @@ export async function GET(request: NextRequest) {
   if (networks.length > 0) where.network = { in: networks };
   if (tags.length > 0) where.tags = { hasSome: tags };
 
+  const orderBy =
+    sort === "absolute_rank"
+      ? { absolute_rank: "asc" as const }
+      : { score: order === "asc" ? ("asc" as const) : ("desc" as const) };
+
   const shows = await prisma.show.findMany({
     where: Object.keys(where).length ? where : undefined,
-    orderBy: { score: order === "asc" ? "asc" : "desc" },
+    orderBy,
   });
 
   const tierRank = (t: string) => TIER_ORDER.indexOf(t as (typeof TIER_ORDER)[number]);
@@ -35,7 +41,7 @@ export async function GET(request: NextRequest) {
     sorted = [...shows].sort((a, b) => {
       const ra = a.absolute_rank ?? 1e9;
       const rb = b.absolute_rank ?? 1e9;
-      return order === "asc" ? ra - rb : rb - ra;
+      return ra - rb;
     });
   } else if (sort === "tier,score" || !sort) {
     sorted = [...shows].sort((a, b) => {

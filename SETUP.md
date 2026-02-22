@@ -5,7 +5,7 @@
 - Next.js (App Router) + TypeScript + Tailwind
 - Prisma with a `Show` model matching the spec
 - Seed script + sample CSV at `prisma/data/shows.csv`
-- Scripts: `npm run dev`, `npm run db:generate`, `npm run db:push`, `npm run db:seed`, `npm run db:studio`
+- Scripts: `pnpm run dev`, `pnpm run data:sync` (local DB + TVMaze), `pnpm run prod:db` (prod DB), `pnpm run db:studio`
 
 ---
 
@@ -33,22 +33,23 @@ docker compose up -d
 
 Postgres 16 runs on port 5432 using the user/password/db from `.env`. Data is stored in a Docker volume so it survives restarts.
 
-### 3. Create tables and seed data
+### 3. Sync schema and data (one command)
 
 ```bash
-npm run db:push
-npm run db:seed
+pnpm run data:sync
 ```
+
+This runs: schema push → seed → ranks backfill → covers (TVMaze) → episodes (TVMaze). First time may take a minute. Re-run anytime you add shows or want fresh covers/episodes.
 
 ### 4. Run the app
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-**Optional:** `npm run db:studio` opens Prisma Studio to browse or edit the database.
+**Optional:** `pnpm run db:studio` opens Prisma Studio. `pnpm run covers:fetch -- --force` or `pnpm run episodes:fetch -- --force` refreshes TVMaze data.
 
 **Stop Postgres when you’re done:** `docker compose down` (add `-v` only if you want to wipe the DB volume).
 
@@ -63,9 +64,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Production later
+## Production
 
-When you deploy, create a project on [Neon](https://neon.tech) or [Supabase](https://supabase.com), set `DATABASE_URL` in your host’s env (e.g. Vercel), run `db:push` (and seed or migrate) against that URL. No app code changes.
+See **[DEPLOY.md](DEPLOY.md)**. Short version: create a DB on [Neon](https://neon.tech) or [Supabase](https://supabase.com), set `DATABASE_URL` in your host (e.g. Vercel). To fill or update prod data: `export DATABASE_URL='…'` then `pnpm run prod:db`.
 
 ---
 

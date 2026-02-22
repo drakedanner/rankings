@@ -8,7 +8,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-/** Ordered list of 33 show names (rank 1 = index 0). */
+/** Ordered list of 33 show names (best first). Rank 1 = index 0. */
 const RANKED_SHOW_NAMES = [
   "Task",
   "The Pitt",

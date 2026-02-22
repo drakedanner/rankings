@@ -14,10 +14,7 @@ export async function GET(
   }
 
   const episodes = await prisma.episode.findMany({
-    where: {
-      showId: id,
-      ...(show.season != null ? { season: show.season } : {}),
-    },
+    where: { showId: id },
     orderBy: [{ season: "asc" }, { number: "asc" }],
   });
 
