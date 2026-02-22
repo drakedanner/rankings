@@ -54,6 +54,8 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // absolute_rank = position in the full canonical list (1 = best, 2 = second, …). Used for
+  // display order and the rank badge. score = quality rating 0–10, shown as "SCORE" in the UI.
   const payload = sorted.map((s) => ({
     id: s.id,
     name: s.name,

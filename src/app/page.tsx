@@ -120,8 +120,14 @@ export default function Home() {
             <p className="text-sm text-secondary">No shows match the filters.</p>
           ) : (
             <div className="grid grid-cols-1 gap-2 lg:grid-cols-3 2xl:grid-cols-6">
+              {/* rank = absolute_rank from API: position in full list (1 = best), not score */}
               {shows.map((show) => (
-                <ShowCard key={show.id} show={show} rank={show.absolute_rank ?? null} depth={depth} />
+                <ShowCard
+                  key={show.id}
+                  show={show}
+                  rank={show.absolute_rank ?? null}
+                  depth={depth}
+                />
               ))}
             </div>
           )}
