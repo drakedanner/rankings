@@ -73,6 +73,7 @@ async function main() {
   const tagsIdx = findHeaderIndex(header, ["tags"]);
   const scoreIdx = findHeaderIndex(header, ["score"]);
   const tierIdx = findHeaderIndex(header, ["tier"]);
+  const yearIdx = findHeaderIndex(header, ["year"]);
 
   if (nameIdx === -1 || seasonIdx === -1 || networkIdx === -1 || tagsIdx === -1 || scoreIdx === -1 || tierIdx === -1) {
     console.error("CSV must have columns: name (or Show), season, network, tags, score, tier");
@@ -102,6 +103,8 @@ async function main() {
     const network = values[networkIdx]?.trim() ?? "";
     const tags = parseTags(values[tagsIdx] ?? "");
     const description = descriptions[name]?.trim() || null;
+    const yearVal = yearIdx >= 0 ? values[yearIdx]?.trim() : "";
+    const year = yearVal ? Math.min(2100, Math.max(2000, parseInt(yearVal, 10) || 2025)) : 2025;
 
     await prisma.show.create({
       data: {
@@ -111,6 +114,7 @@ async function main() {
         tags,
         score,
         tier,
+        year,
         description,
       },
     });

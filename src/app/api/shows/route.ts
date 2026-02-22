@@ -4,8 +4,13 @@ import { TIER_ORDER } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
+const DEFAULT_YEAR = 2025;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const yearParam = searchParams.get("year");
+  const year = yearParam ? Math.min(2100, Math.max(2000, parseInt(yearParam, 10) || DEFAULT_YEAR)) : DEFAULT_YEAR;
+
   const tierParam = searchParams.get("tier");
   const networkParam = searchParams.get("network");
   const tagParam = searchParams.get("tag");
@@ -18,10 +23,11 @@ export async function GET(request: NextRequest) {
   const tags = tagParam ? tagParam.split(",").map((t) => t.trim()).filter(Boolean) : [];
 
   const where: {
+    year: number;
     tier?: { in: string[] };
     network?: { in: string[] };
     tags?: { hasSome: string[] };
-  } = {};
+  } = { year };
 
   if (tiers.length > 0) where.tier = { in: tiers };
   if (networks.length > 0) where.network = { in: networks };
@@ -33,7 +39,7 @@ export async function GET(request: NextRequest) {
       : { score: order === "asc" ? ("asc" as const) : ("desc" as const) };
 
   const shows = await prisma.show.findMany({
-    where: Object.keys(where).length ? where : undefined,
+    where,
     orderBy,
   });
 
@@ -64,6 +70,7 @@ export async function GET(request: NextRequest) {
     tags: s.tags,
     score: Number(s.score),
     tier: s.tier,
+    year: s.year,
     absolute_rank: s.absolute_rank,
     description: s.description,
     cover_url: s.cover_url,

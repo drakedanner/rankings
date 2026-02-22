@@ -20,6 +20,7 @@ export async function GET(
     tags: show.tags,
     score: Number(show.score),
     tier: show.tier,
+    year: show.year,
     absolute_rank: show.absolute_rank,
     description: show.description,
     cover_url: show.cover_url,

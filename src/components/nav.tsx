@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 const links = [
-  { href: "/", label: "Rankings" },
+  { href: "/", label: "2025" },
+  { href: "/2026", label: "2026" },
   { href: "/tiers", label: "Tiers" },
   { href: "/covers", label: "Covers" },
 ];
@@ -11,7 +12,7 @@ export function Nav({ currentPath }: { currentPath: string }) {
     <nav className="sticky top-0 z-10 bg-[var(--background)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--background)]/80">
       <div className="flex h-14 items-center justify-between px-4 sm:px-6">
         <Link href="/" className="font-serif text-xl font-bold text-foreground">
-          2025 TV Rankings
+          TV Rankings
         </Link>
         <div className="flex items-center gap-1">
           {links.map(({ href, label }) => {

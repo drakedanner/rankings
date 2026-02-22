@@ -14,21 +14,24 @@ datasource db {
 }
 
 model Show {
-  id          String    @id @default(uuid())
-  name        String
-  season      Int
-  network     String
-  tags        String[]
-  score       Decimal   @db.Decimal(3, 1)
-  tier        String
-  absolute_rank Int?
-  description String?
-  cover_url     String?
-  tvmaze_id     Int?
-  tvmaze_rating Decimal? @db.Decimal(3, 1)
-  created_at    DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  episodes    Episode[]
+  id             String    @id @default(uuid())
+  name           String
+  season         Int
+  network        String
+  tags           String[]
+  score          Decimal   @db.Decimal(3, 1)
+  tier           String
+  year           Int       @default(2025) // production year (single source of truth for rankings)
+  absolute_rank  Int?
+  description    String?
+  cover_url      String?
+  tvmaze_id      Int?
+  tvmaze_rating  Decimal?  @db.Decimal(3, 1)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  episodes       Episode[]
+
+  @@index([year])
 }
 
 model Episode {

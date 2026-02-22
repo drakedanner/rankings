@@ -19,8 +19,8 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "2025 TV Rankings",
-  description: "Rankings and tier list for TV shows released in 2025",
+  title: "TV Rankings",
+  description: "Rankings and tier list for TV shows by year",
 };
 
 export default function RootLayout({
