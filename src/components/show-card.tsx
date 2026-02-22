@@ -37,7 +37,7 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
   return (
     <article className="flex overflow-hidden rounded-sm bg-background lg:flex-col">
       {/* Image: horizontal strip on mobile, cropped top block on desktop */}
-      <div className="relative w-20 shrink-0 aspect-[3/4] bg-card lg:w-full lg:aspect-[3/4] lg:min-h-0">
+      <div className="group relative w-20 shrink-0 aspect-[3/4] bg-card lg:w-full lg:aspect-[3/4] lg:min-h-0">
         {show.cover_url ? (
           <Image
             src={show.cover_url}
@@ -52,6 +52,15 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
             <PlaceholderCover name={show.name} tier={show.tier} />
           </div>
         )}
+        {/* Desktop-only hover overlay with large centered rank */}
+        <div
+          className="pointer-events-none absolute inset-0 flex items-center justify-center bg-neutral-800/60 opacity-0 transition-opacity duration-200 lg:group-hover:opacity-100"
+          aria-hidden
+        >
+          <span className="font-mono text-5xl font-bold tabular-nums text-white lg:text-6xl">
+            {rank}
+          </span>
+        </div>
         <div className="absolute bottom-1 left-1 flex items-center gap-1 lg:bottom-1.5 lg:left-1.5 lg:gap-1.5">
           <span
             className="flex h-6 w-6 items-center justify-center rounded-full bg-header-bar font-mono text-[10px] font-bold tabular-nums text-white lg:h-7 lg:w-7 lg:text-xs"
