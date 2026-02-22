@@ -1,4 +1,5 @@
 // Consumption-first hierarchy: What to watch (TV, Movies) | Where to eat (Spots)
+export const SPOTS_PATH = "/spots" as const;
 export const CONSUMPTION_TOP_LEVEL = [
   { id: "what-to-watch", label: "What to watch", slugs: ["tv", "movies"] as const },
   { id: "where-to-eat", label: "Where to eat", slugs: ["spots"] as const },

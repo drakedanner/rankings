@@ -1,6 +1,6 @@
 "use client";
 
-export type Depth = "skim" | "peruse" | "deep";
+export type Depth = "index" | "expanded";
 
 type FilterSidebarProps = {
   depth: Depth;
@@ -20,9 +20,8 @@ type FilterSidebarProps = {
 };
 
 const DEPTH_LABELS: { value: Depth; label: string }[] = [
-  { value: "skim", label: "Skim" },
-  { value: "peruse", label: "Peruse" },
-  { value: "deep", label: "Deep Dive" },
+  { value: "index", label: "Index" },
+  { value: "expanded", label: "Expanded" },
 ];
 
 function FilterChip({

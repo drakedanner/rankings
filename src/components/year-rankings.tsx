@@ -38,7 +38,7 @@ export function YearRankings({
 }) {
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
-  const [depth, setDepth] = useState<Depth>("peruse");
+  const [depth, setDepth] = useState<Depth>("index");
   const [filterOptions, setFilterOptions] = useState<{
     networks: string[];
     tags: string[];

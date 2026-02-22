@@ -56,20 +56,23 @@ async function main() {
     return;
   }
 
+  let showsToProcess: (typeof shows)[number][];
   if (!FORCE) {
     const withEpisodes = await prisma.episode.groupBy({
       by: ["showId"],
       _count: { showId: true },
     });
     const showIdsWithEpisodes = new Set(withEpisodes.map((e) => e.showId));
-    const toFetch = shows.filter((s) => !showIdsWithEpisodes.has(s.id));
-    if (toFetch.length === 0) {
+    showsToProcess = shows.filter((s) => !showIdsWithEpisodes.has(s.id));
+    if (showsToProcess.length === 0) {
       console.log("All shows with tvmaze_id already have episodes. Use --force to refetch.");
       return;
     }
+  } else {
+    showsToProcess = shows;
   }
 
-  console.log(`Fetching episodes for ${shows.length} shows...`);
+  console.log(`Fetching episodes for ${showsToProcess.length} shows...`);
 
   let totalUpserted = 0;
 
@@ -124,11 +127,11 @@ async function main() {
     return episodes.length;
   }
 
-  for (let i = 0; i < shows.length; i += CONCURRENCY) {
-    const chunk = shows.slice(i, i + CONCURRENCY);
+  for (let i = 0; i < showsToProcess.length; i += CONCURRENCY) {
+    const chunk = showsToProcess.slice(i, i + CONCURRENCY);
     const counts = await Promise.all(chunk.map(processShow));
     totalUpserted += counts.reduce((a, b) => a + b, 0);
-    if (i + CONCURRENCY < shows.length) {
+    if (i + CONCURRENCY < showsToProcess.length) {
       await sleep(DELAY_MS);
     }
   }

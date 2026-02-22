@@ -6,8 +6,7 @@ import Link from "next/link";
 import { TagPill } from "./tag-pill";
 import { PlaceholderCover } from "./placeholder-cover";
 import type { Show } from "./show-row";
-
-export type Depth = "skim" | "peruse" | "deep";
+import type { Depth } from "./filter-sidebar";
 
 type ShowCardProps = {
   show: Show;
@@ -28,9 +27,8 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
     ? " — " + truncate(show.description, 120)
     : "";
 
-  const showStatBlock = depth === "peruse" || depth === "deep";
-  const showDescriptionTruncated = depth === "peruse" && show.description;
-  const showDescriptionFull = depth === "deep" && show.description;
+  const showStatBlock = depth === "expanded";
+  const showDescriptionFull = depth === "expanded" && show.description;
 
   const imageSizes =
     "(max-width: 1023px) 80px, (min-width: 1536px) 16.67vw, (min-width: 1024px) 33.33vw, 100vw";
@@ -135,12 +133,6 @@ export function ShowCard({ show, rank, depth }: ShowCardProps) {
               </div>
             )}
           </div>
-        )}
-
-        {showDescriptionTruncated && show.description && (
-          <p className="line-clamp-2 pt-0.5 text-xs leading-relaxed text-foreground lg:line-clamp-none lg:pt-1 lg:text-sm">
-            {truncate(show.description, 300)}
-          </p>
         )}
 
         {showDescriptionFull && (

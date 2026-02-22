@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
+import { SPOTS_PATH } from "@/lib/constants";
 import type { SpotWithCoords } from "@/components/spots-map";
 
 const SpotsMap = dynamic(() => import("@/components/spots-map").then((m) => m.SpotsMap), {
@@ -26,7 +27,7 @@ export default function SpotsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Nav currentPath="/spots" />
+      <Nav currentPath={SPOTS_PATH} />
       <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <h1 className="font-serif text-2xl font-bold text-foreground">Boston</h1>
         <p className="mt-1 text-sm text-secondary">Where to eat — ongoing list.</p>

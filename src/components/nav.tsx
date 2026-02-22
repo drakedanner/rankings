@@ -5,6 +5,7 @@ import {
   CATEGORIES_YEAR_SCOPED,
   YEARS,
   DEFAULT_YEAR,
+  SPOTS_PATH,
 } from "@/lib/constants";
 
 type NavProps = {
@@ -15,7 +16,7 @@ type NavProps = {
 
 function getConsumptionContext(currentPath: string, category?: string): string | null {
   if (category && CATEGORIES_YEAR_SCOPED.includes(category as "tv" | "movies")) return "what-to-watch";
-  if (currentPath === "/spots" || currentPath === "/food" || currentPath.startsWith("/spots")) return "where-to-eat";
+  if (currentPath === SPOTS_PATH || currentPath === "/food" || currentPath.startsWith(SPOTS_PATH)) return "where-to-eat";
   return null;
 }
 
@@ -33,7 +34,7 @@ export function Nav({ currentPath, category, year }: NavProps) {
         <div className="flex items-center gap-1">
           {CONSUMPTION_TOP_LEVEL.map((top) => {
             const isActive = top.id === consumption;
-            const href = top.slugs[0] === "spots" ? "/spots" : `/${top.slugs[0]}/${DEFAULT_YEAR}`;
+            const href = top.slugs[0] === "spots" ? SPOTS_PATH : `/${top.slugs[0]}/${DEFAULT_YEAR}`;
             return (
               <Link
                 key={top.id}
@@ -76,7 +77,7 @@ export function Nav({ currentPath, category, year }: NavProps) {
             })}
           {consumption === "where-to-eat" && (
             <Link
-              href="/spots"
+              href={SPOTS_PATH}
               className="relative px-3 py-1.5 text-sm font-medium text-[var(--accent)]"
             >
               Spots
