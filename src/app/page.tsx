@@ -1,7 +1,6 @@
-"use client";
-
-import { YearRankings } from "@/components/year-rankings";
+import { redirect } from "next/navigation";
+import { DEFAULT_YEAR } from "@/lib/constants";
 
 export default function Home() {
-  return <YearRankings year={2025} currentPath="/" />;
+  redirect(`/tv/${DEFAULT_YEAR}`);
 }

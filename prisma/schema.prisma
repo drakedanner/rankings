@@ -22,6 +22,7 @@ model Show {
   score          Decimal   @db.Decimal(3, 1)
   tier           String
   year           Int       @default(2025) // production year (single source of truth for rankings)
+  category       String    @default("tv") // tv | movies (year-scoped rankings; food is separate)
   absolute_rank  Int?
   description    String?
   cover_url      String?
@@ -32,6 +33,7 @@ model Show {
   episodes       Episode[]
 
   @@index([year])
+  @@index([category, year])
 }
 
 model Episode {
@@ -51,4 +53,14 @@ model Episode {
   updated_at       DateTime @updatedAt
 
   @@index([showId])
+}
+
+model Spot {
+  id          String   @id @default(uuid())
+  name        String
+  tagline     String   // e.g. "deep dish pizza", "burger and wine bar"
+  neighborhood String? // e.g. "North End"
+  city        String   @default("Boston")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }

@@ -74,6 +74,7 @@ async function main() {
   const scoreIdx = findHeaderIndex(header, ["score"]);
   const tierIdx = findHeaderIndex(header, ["tier"]);
   const yearIdx = findHeaderIndex(header, ["year"]);
+  const categoryIdx = findHeaderIndex(header, ["category", "type"]);
 
   if (nameIdx === -1 || seasonIdx === -1 || networkIdx === -1 || tagsIdx === -1 || scoreIdx === -1 || tierIdx === -1) {
     console.error("CSV must have columns: name (or Show), season, network, tags, score, tier");
@@ -105,6 +106,8 @@ async function main() {
     const description = descriptions[name]?.trim() || null;
     const yearVal = yearIdx >= 0 ? values[yearIdx]?.trim() : "";
     const year = yearVal ? Math.min(2100, Math.max(2000, parseInt(yearVal, 10) || 2025)) : 2025;
+    const categoryVal = categoryIdx >= 0 ? values[categoryIdx]?.trim().toLowerCase() : "";
+    const category = categoryVal === "movies" ? "movies" : "tv";
 
     await prisma.show.create({
       data: {
@@ -115,6 +118,7 @@ async function main() {
         score,
         tier,
         year,
+        category,
         description,
       },
     });
@@ -122,6 +126,26 @@ async function main() {
   }
 
   console.log(`Seeded ${created} shows.`);
+
+  // Boston spots (Where to eat)
+  const bostonSpots = [
+    { name: "Worden Hall", tagline: "deep dish pizza", neighborhood: null },
+    { name: "Grays Hall", tagline: "burger and wine bar", neighborhood: null },
+    { name: "Sam La Grassas", tagline: "sandwiches", neighborhood: null },
+    { name: "Vino teca", tagline: "wine bar", neighborhood: "North End" },
+  ];
+  await prisma.spot.deleteMany();
+  for (const s of bostonSpots) {
+    await prisma.spot.create({
+      data: {
+        name: s.name,
+        tagline: s.tagline,
+        neighborhood: s.neighborhood ?? undefined,
+        city: "Boston",
+      },
+    });
+  }
+  console.log(`Seeded ${bostonSpots.length} spots (Boston).`);
 }
 
 main()

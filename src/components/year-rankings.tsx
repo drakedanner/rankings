@@ -8,6 +8,7 @@ import { type Show } from "@/components/show-row";
 import { TIER_ORDER } from "@/lib/constants";
 
 function buildQuery(
+  category: string,
   year: number,
   filters: {
     tiers: string[];
@@ -16,6 +17,7 @@ function buildQuery(
   }
 ) {
   const params = new URLSearchParams();
+  params.set("category", category);
   params.set("year", String(year));
   if (filters.tiers.length) params.set("tier", filters.tiers.join(","));
   if (filters.networks.length) params.set("network", filters.networks.join(","));
@@ -26,9 +28,11 @@ function buildQuery(
 }
 
 export function YearRankings({
+  category,
   year,
   currentPath,
 }: {
+  category: "tv" | "movies";
   year: number;
   currentPath: string;
 }) {
@@ -53,9 +57,8 @@ export function YearRankings({
         const res = await fetch(`/api/shows?${queryString}`, { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
-        const byAbsoluteRank = (a: Show, b: Show) =>
-          (a.absolute_rank ?? 1e9) - (b.absolute_rank ?? 1e9);
-        setShows((data as Show[]).slice().sort(byAbsoluteRank));
+        // API returns order by absolute_rank; keep that order (no client re-sort).
+        setShows(data as Show[]);
         if (!filtersApplied) {
           const networks = [...new Set((data as Show[]).map((s) => s.network).filter(Boolean))].sort();
           const tags = [...new Set((data as Show[]).flatMap((s) => s.tags))].sort();
@@ -68,11 +71,11 @@ export function YearRankings({
         setLoading(false);
       }
     },
-    [year]
+    [category, year]
   );
 
   useEffect(() => {
-    const q = buildQuery(year, filters);
+    const q = buildQuery(category, year, filters);
     const filtersApplied =
       filters.tiers.length > 0 || filters.networks.length > 0 || filters.tags.length > 0;
     fetchShows(q, filtersApplied);
@@ -101,7 +104,7 @@ export function YearRankings({
 
   return (
     <div className="min-h-screen bg-background">
-      <Nav currentPath={currentPath} />
+      <Nav currentPath={currentPath} category={category} year={year} />
       <div className="flex">
         <FilterSidebar
           depth={depth}

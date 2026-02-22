@@ -15,6 +15,7 @@ export type Show = {
   score: number;
   tier: string;
   year?: number;
+  category?: string;
   absolute_rank?: number | null;
   description: string | null;
   cover_url: string | null;
