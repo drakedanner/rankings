@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const spots = await prisma.spot.findMany({
-    orderBy: { name: "asc" },
+    orderBy: { created_at: "asc" },
   });
   const payload = spots.map((s) => ({
     id: s.id,
@@ -12,6 +12,8 @@ export async function GET() {
     tagline: s.tagline,
     neighborhood: s.neighborhood,
     city: s.city,
+    latitude: s.latitude,
+    longitude: s.longitude,
   }));
   return Response.json(payload);
 }

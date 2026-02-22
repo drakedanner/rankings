@@ -56,11 +56,13 @@ model Episode {
 }
 
 model Spot {
-  id          String   @id @default(uuid())
-  name        String
-  tagline     String   // e.g. "deep dish pizza", "burger and wine bar"
-  neighborhood String? // e.g. "North End"
-  city        String   @default("Boston")
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String
+  tagline      String   // e.g. "deep dish pizza", "burger and wine bar"
+  neighborhood String?  // e.g. "North End"
+  city         String   @default("Boston")
+  latitude     Float?   // for map plotting
+  longitude    Float?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 }

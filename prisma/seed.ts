@@ -129,10 +129,13 @@ async function main() {
 
   // Boston spots (Where to eat)
   const bostonSpots = [
-    { name: "Worden Hall", tagline: "deep dish pizza", neighborhood: null },
-    { name: "Grays Hall", tagline: "burger and wine bar", neighborhood: null },
-    { name: "Sam La Grassas", tagline: "sandwiches", neighborhood: null },
-    { name: "Vino teca", tagline: "wine bar", neighborhood: "North End" },
+    { name: "Worden Hall", tagline: "deep dish pizza", neighborhood: null, latitude: 42.3376, longitude: -71.0494 },
+    { name: "Grays Hall", tagline: "burger and wine bar", neighborhood: null, latitude: 42.3385, longitude: -71.05 },
+    { name: "Sam La Grassas", tagline: "sandwiches", neighborhood: null, latitude: 42.3647, longitude: -71.0544 },
+    { name: "Vino teca", tagline: "wine bar", neighborhood: "North End", latitude: 42.365, longitude: -71.055 },
+    { name: "Crazy Good Kitchen", tagline: "comfort food", neighborhood: null, latitude: 42.35, longitude: -71.06 },
+    { name: "Capital Burger", tagline: "burgers", neighborhood: null, latitude: 42.355, longitude: -71.058 },
+    { name: "Small Victories", tagline: "cafe", neighborhood: null, latitude: 42.362, longitude: -71.052 },
   ];
   await prisma.spot.deleteMany();
   for (const s of bostonSpots) {
@@ -142,6 +145,8 @@ async function main() {
         tagline: s.tagline,
         neighborhood: s.neighborhood ?? undefined,
         city: "Boston",
+        latitude: s.latitude,
+        longitude: s.longitude,
       },
     });
   }

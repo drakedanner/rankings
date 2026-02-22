@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
+import type { SpotWithCoords } from "@/components/spots-map";
 
-type Spot = {
-  id: string;
-  name: string;
-  tagline: string;
-  neighborhood: string | null;
-  city: string;
-};
+const SpotsMap = dynamic(() => import("@/components/spots-map").then((m) => m.SpotsMap), {
+  ssr: false,
+});
+
+type Spot = SpotWithCoords;
 
 export default function SpotsPage() {
   const [spots, setSpots] = useState<Spot[]>([]);
@@ -30,6 +30,11 @@ export default function SpotsPage() {
       <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <h1 className="font-serif text-2xl font-bold text-foreground">Boston</h1>
         <p className="mt-1 text-sm text-secondary">Where to eat — ongoing list.</p>
+        {!loading && spots.length > 0 ? (
+          <div className="mt-6">
+            <SpotsMap spots={spots} />
+          </div>
+        ) : null}
         {loading ? (
           <p className="mt-6 text-sm text-secondary">Loading…</p>
         ) : spots.length === 0 ? (
