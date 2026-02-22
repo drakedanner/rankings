@@ -16,7 +16,7 @@
     "episodes:fetch": "tsx scripts/fetch-episodes.ts",
     "ranks:backfill": "tsx scripts/backfill-absolute-ranks.ts",
     "data:sync": "pnpm run db:push && pnpm run db:seed && pnpm run ranks:backfill && pnpm run covers:fetch && pnpm run episodes:fetch",
-    "prod:db": "pnpm run db:push && pnpm run db:seed && pnpm run ranks:backfill && pnpm run covers:fetch && pnpm run episodes:fetch"
+    "prod:db": "node scripts/check-database-url.mjs && pnpm run db:push && pnpm run db:seed && pnpm run ranks:backfill && pnpm run covers:fetch && pnpm run episodes:fetch"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

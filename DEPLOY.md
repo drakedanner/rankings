@@ -4,6 +4,36 @@
 
 ---
 
+## First-time: get data on prod (Supabase + Vercel)
+
+If you already have Supabase and Vercel set up but prod shows no data, do these two things.
+
+**1. Get the Postgres connection string from Supabase**
+
+- Open [Supabase Dashboard](https://supabase.com/dashboard) and select your project.
+- Either:
+  - Click **Connect** in the top bar → under "Connection string" choose **URI** and copy it, or
+  - Go to **Project Settings** (gear in sidebar) → **Database** → **Connection string** → **URI** and copy it.
+- The string must start with `postgresql://` or `postgres://`. Replace `[YOUR-PASSWORD]` with your database password (reset it on that same Database page if needed).
+- Do **not** use the project URL (`https://xxx.supabase.co`) — that is not the database URI.
+
+**2. Put that URI in Vercel and fill the prod DB**
+
+- **Vercel:** Project → **Settings** → **Environment Variables** → add `DATABASE_URL` with the `postgresql://...` value (Production). Save, then **Redeploy**.
+- **Your terminal** (paste the real URI only in the terminal, never in this file or in chat):
+
+```bash
+export DATABASE_URL='postgresql://postgres.[ref]:YOUR_PASSWORD@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true'
+pnpm run prod:db
+unset DATABASE_URL
+```
+
+If you see "DATABASE_URL must be a Postgres URI..." or "the URL must start with postgresql://", you used the wrong value — get the **URI** from Supabase’s Connect panel or Database settings, not the `https://` URL.
+
+After that, your prod site will show spots, shows, and episodes.
+
+---
+
 ## Deploy the app
 
 Push to the branch your host uses (e.g. `main`):
