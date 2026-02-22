@@ -25,12 +25,13 @@ export function FilterBar({
   onTagToggle,
   onClear,
 }: FilterBarProps) {
-  const hasFilters = selectedTiers.length > 0 || selectedNetworks.length > 0 || selectedTags.length > 0;
+  const hasFilters =
+    selectedTiers.length > 0 || selectedNetworks.length > 0 || selectedTags.length > 0;
 
   return (
-    <div className="flex flex-wrap items-center gap-4 border-b border-zinc-200 bg-white px-4 py-3 sm:px-6">
+    <div className="flex flex-wrap items-center gap-4 border-b border-card bg-card px-4 py-3 sm:px-6">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Tier</span>
+        <span className="text-xs font-medium uppercase tracking-wider text-stat-label">Tier</span>
         {tierOptions.map((tier) => (
           <button
             key={tier}
@@ -38,8 +39,8 @@ export function FilterBar({
             onClick={() => onTierToggle(tier)}
             className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
               selectedTiers.includes(tier)
-                ? "bg-zinc-900 text-white"
-                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                ? "bg-accent text-white"
+                : "bg-background text-secondary hover:bg-foreground hover:text-background"
             }`}
           >
             {tier}
@@ -48,7 +49,9 @@ export function FilterBar({
       </div>
       {networkOptions.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Network</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-stat-label">
+            Network
+          </span>
           {networkOptions.slice(0, 15).map((network) => (
             <button
               key={network}
@@ -56,8 +59,8 @@ export function FilterBar({
               onClick={() => onNetworkToggle(network)}
               className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                 selectedNetworks.includes(network)
-                  ? "bg-zinc-900 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                  ? "bg-accent text-white"
+                  : "bg-background text-secondary hover:bg-foreground hover:text-background"
               }`}
             >
               {network || "(none)"}
@@ -67,7 +70,7 @@ export function FilterBar({
       )}
       {tagOptions.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Tag</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-stat-label">Tag</span>
           {tagOptions.slice(0, 20).map((tag) => (
             <button
               key={tag}
@@ -75,8 +78,8 @@ export function FilterBar({
               onClick={() => onTagToggle(tag)}
               className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                 selectedTags.includes(tag)
-                  ? "bg-zinc-900 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                  ? "bg-accent text-white"
+                  : "bg-background text-secondary hover:bg-foreground hover:text-background"
               }`}
             >
               {tag}
@@ -88,7 +91,7 @@ export function FilterBar({
         <button
           type="button"
           onClick={onClear}
-          className="text-xs font-medium text-zinc-500 underline hover:text-zinc-700"
+          className="text-xs font-medium text-secondary underline hover:text-foreground"
         >
           Clear filters
         </button>

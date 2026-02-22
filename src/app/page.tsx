@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Nav } from "@/components/nav";
-import { FilterBar } from "@/components/filter-bar";
-import { ShowRow, type Show } from "@/components/show-row";
+import { FilterSidebar, type Depth } from "@/components/filter-sidebar";
+import { ShowCard } from "@/components/show-card";
+import { type Show } from "@/components/show-row";
 import { TIER_ORDER } from "@/lib/constants";
 
 function buildQuery(filters: {
@@ -23,6 +24,7 @@ function buildQuery(filters: {
 export default function Home() {
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
+  const [depth, setDepth] = useState<Depth>("peruse");
   const [filterOptions, setFilterOptions] = useState<{
     networks: string[];
     tags: string[];
@@ -32,6 +34,7 @@ export default function Home() {
     networks: [] as string[],
     tags: [] as string[],
   });
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const fetchShows = useCallback(async (queryString: string, filtersApplied: boolean) => {
     setLoading(true);
@@ -40,7 +43,6 @@ export default function Home() {
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setShows(data);
-      // Derive filter options from unfiltered response
       if (!filtersApplied) {
         const networks = [...new Set((data as Show[]).map((s) => s.network).filter(Boolean))].sort();
         const tags = [...new Set((data as Show[]).flatMap((s) => s.tags))].sort();
@@ -56,7 +58,8 @@ export default function Home() {
 
   useEffect(() => {
     const q = buildQuery(filters);
-    const filtersApplied = filters.tiers.length > 0 || filters.networks.length > 0 || filters.tags.length > 0;
+    const filtersApplied =
+      filters.tiers.length > 0 || filters.networks.length > 0 || filters.tags.length > 0;
     fetchShows(q, filtersApplied);
   }, [filters, fetchShows]);
 
@@ -82,62 +85,46 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9]">
+    <div className="min-h-screen bg-background">
       <Nav currentPath="/" />
-      <FilterBar
-        selectedTiers={filters.tiers}
-        selectedNetworks={filters.networks}
-        selectedTags={filters.tags}
-        tierOptions={TIER_ORDER}
-        networkOptions={filterOptions.networks}
-        tagOptions={filterOptions.tags}
-        onTierToggle={onTierToggle}
-        onNetworkToggle={onNetworkToggle}
-        onTagToggle={onTagToggle}
-        onClear={() => setFilters({ tiers: [], networks: [], tags: [] })}
-      />
-      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-        {loading ? (
-          <p className="text-sm text-zinc-500">Loading…</p>
-        ) : shows.length === 0 ? (
-          <p className="text-sm text-zinc-500">No shows match the filters.</p>
-        ) : (
-          <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
-            <table className="w-full table-fixed sm:table-auto">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50/80">
-                  <th className="w-12 py-2.5 pl-4 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    #
-                  </th>
-                  <th className="py-2.5 pr-2 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Show
-                  </th>
-                  <th className="py-2.5 pr-2 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Season
-                  </th>
-                  <th className="py-2.5 pr-2 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Network
-                  </th>
-                  <th className="py-2.5 pr-2 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Score
-                  </th>
-                  <th className="py-2.5 pr-2 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Tier
-                  </th>
-                  <th className="py-2.5 pl-2 pr-4 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Tags
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {shows.map((show, index) => (
-                  <ShowRow key={show.id} show={show} rank={index + 1} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
+      <div className="flex">
+        <FilterSidebar
+          depth={depth}
+          onDepthChange={setDepth}
+          selectedTiers={filters.tiers}
+          selectedNetworks={filters.networks}
+          selectedTags={filters.tags}
+          tierOptions={TIER_ORDER}
+          networkOptions={filterOptions.networks}
+          tagOptions={filterOptions.tags}
+          onTierToggle={onTierToggle}
+          onNetworkToggle={onNetworkToggle}
+          onTagToggle={onTagToggle}
+          onClear={() => setFilters({ tiers: [], networks: [], tags: [] })}
+          drawerOpen={filtersOpen}
+          onDrawerClose={() => setFiltersOpen(false)}
+        />
+        <main className="min-w-0 flex-1 px-3 py-4 sm:px-4">
+          <button
+            type="button"
+            onClick={() => setFiltersOpen(true)}
+            className="mb-3 rounded bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-[var(--secondary)]/20 lg:hidden"
+          >
+            Filters
+          </button>
+          {loading ? (
+            <p className="text-sm text-secondary">Loading…</p>
+          ) : shows.length === 0 ? (
+            <p className="text-sm text-secondary">No shows match the filters.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-2 lg:grid-cols-3 2xl:grid-cols-6">
+              {shows.map((show, index) => (
+                <ShowCard key={show.id} show={show} rank={index + 1} depth={depth} />
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

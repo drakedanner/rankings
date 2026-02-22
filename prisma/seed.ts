@@ -93,7 +93,7 @@ async function main() {
     const name = values[nameIdx]?.trim();
     const tier = values[tierIdx]?.trim();
 
-    if (!name || !tier || !TIER_ORDER.includes(tier)) continue;
+    if (!name || !tier || !(TIER_ORDER as readonly string[]).includes(tier)) continue;
 
     const score = parseFloat(values[scoreIdx] ?? "");
     if (isNaN(score) || score < 0 || score > 10) continue;
